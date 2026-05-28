@@ -43,7 +43,6 @@ function saveScore(name, score) {
     localStorage.setItem("dinoScores", JSON.stringify(currentRank));
 }
 
-// --- [수정] 메달이 표시되도록 점수판 함수 업그레이드 ---
 function showLeaderboard() {
     if (gameState === "GAME_OVER") {
         gameState = "RANKING_FROM_GAMEOVER";
@@ -57,18 +56,15 @@ function showLeaderboard() {
     if (currentRank.length === 0) {
         leaderboardList.innerHTML = "<li>등록된 기록이 없습니다!</li>";
     } else {
-        // 배열의 0번째가 1등, 1번째가 2등... 순서대로 나옵니다.
         currentRank.forEach((item, index) => {
             let medalClass = "";
-            let medalNumber = index + 1; // 등수는 1부터 시작
+            let medalNumber = index + 1;
 
-            // 1, 2, 3등과 나머지 등수에 맞는 메달 색상 클래스 지정
             if (medalNumber === 1) medalClass = "medal medal-1";
             else if (medalNumber === 2) medalClass = "medal medal-2";
             else if (medalNumber === 3) medalClass = "medal medal-3";
             else medalClass = "medal medal-etc";
 
-            // 동그라미 안에 숫자를 집어넣어 리스트 아이템 생성
             leaderboardList.innerHTML += `
                 <li>
                     <span class="${medalClass}">${medalNumber}</span>
@@ -139,9 +135,9 @@ function drawMenu() {
     ctx.font = "bold 35px Arial";
     ctx.fillText("장애물 피하기", canvas.width / 2 - 95, canvas.height / 2 - 20);
     
-    ctx.font = "16px Arial";
+    ctx.font = "14px Arial";
     ctx.fillStyle = "#7f8c8d";
-    ctx.fillText("게임 시작은 [S] 키를, 점수 확인은 [A] 키를 누르세요", canvas.width / 2 - 170, canvas.height / 2 + 30);
+    ctx.fillText("게임 시작(S) / 역대 점수 확인(A)", canvas.width / 2 - 100, canvas.height / 2 + 30);
     
     btnStart.innerText = "게임시작 (S)";
     btnRank.innerText = "역대 점수 확인 (A)";
@@ -156,8 +152,8 @@ function drawGameOver() {
     ctx.fillText("GAME OVER", canvas.width / 2 - 100, canvas.height / 2 - 20);
     
     ctx.fillStyle = isDarkTheme ? "#ffffff" : "#535353";
-    ctx.font = "15px Arial";
-    ctx.fillText("시작화면으로 이동: [ESC]", canvas.width / 2 - 80, canvas.height / 2 + 30);
+    ctx.font = "14px Arial";
+    ctx.fillText("시작화면 메뉴 이동: [ESC] 또는 블록 버튼 터치", canvas.width / 2 - 130, canvas.height / 2 + 30);
 
     btnStart.innerText = "다시하기 (S)";
     btnRank.innerText = "역대 점수 확인 (A)";
@@ -260,13 +256,56 @@ function createCactus(xPosition, speed) {
     obstacles.push({ x: xPosition, y: 310, width: 20, height: 40, speed: speed, type: "cactus" });
 }
 
-// 키보드 조작 핵심 제어
+// --- 📱 [모바일 전용 핵심 추가] 화면 터치 및 버튼 누르기 제어 ---
+
+// 1. 게임 실행 중일 때 도화지(Canvas) 터치하면 무조건 점프!
+function handleJumpAction() {
+    if (gameState === "PLAYING" && !dino.isJumping) {
+        dino.dy = -dino.jumpForce;
+        dino.isJumping = true;
+    }
+}
+canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // 스마트폰 더블터치 확대 같은 기본 오작동 방지
+    handleJumpAction();
+});
+canvas.addEventListener("mousedown", () => {
+    handleJumpAction(); // PC에서 마우스로 도화지 클릭해도 점프되도록 지원
+});
+
+// 2. 점수판 팝업 떠있을 때 화면 터치하면 꺼지도록 지원
+leaderboardScreen.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (gameState === "RANKING" || gameState === "RANKING_FROM_GAMEOVER") hideLeaderboard();
+});
+leaderboardScreen.addEventListener("click", () => {
+    if (gameState === "RANKING" || gameState === "RANKING_FROM_GAMEOVER") hideLeaderboard();
+});
+
+// 3. 우측 하단 "블록 버튼" 마우스 클릭 & 손가락 터치 이벤트 연결
+// 게임 시작 / 다시 하기 블록
+function handleStartBlock() {
+    if (gameState === "START_MENU" || gameState === "GAME_OVER") {
+        startGame();
+    }
+}
+btnStart.addEventListener("click", handleStartBlock);
+btnStart.addEventListener("touchstart", (e) => { e.preventDefault(); handleStartBlock(); });
+
+// 역대 점수 확인 블록
+function handleRankBlock() {
+    if (gameState === "START_MENU" || gameState === "GAME_OVER") {
+        showLeaderboard();
+    }
+}
+btnRank.addEventListener("click", handleRankBlock);
+btnRank.addEventListener("touchstart", (e) => { e.preventDefault(); handleRankBlock(); });
+
+
+// --- ⌨️ [기존 PC용 조작] 키보드 제어 유지 ---
 window.addEventListener("keydown", (e) => {
     if (gameState === "PLAYING") {
-        if (e.code === "Space" && !dino.isJumping) {
-            dino.dy = -dino.jumpForce;
-            dino.isJumping = true;
-        }
+        if (e.code === "Space") handleJumpAction();
     }
     else if (gameState === "NAME_INPUT") {
         if (e.code === "Enter") {
