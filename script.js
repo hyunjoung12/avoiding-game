@@ -128,8 +128,12 @@ function backToMenu() {
 
 // --- [그리기 함수들] ---
 function drawMenu() {
+    // 시작 메뉴는 항상 기본 밝은 테마로 리셋
     canvas.style.backgroundColor = "#ffffff"; 
     document.getElementById("score").style.color = "#535353";
+    leaderboardScreen.classList.remove("dark-theme");
+    nameInputScreen.classList.remove("dark-theme");
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#333";
     ctx.font = "bold 35px Arial";
@@ -166,12 +170,17 @@ function update(){
     let currentStage = Math.floor(score / 100);
     let isDarkTheme = (currentStage % 2 === 1); 
 
+    // ★ [실시간 테마 감지] 배경 테마에 맞춰 캔버스, 점수판 UI의 색상을 스왑합니다.
     if (isDarkTheme) {
         canvas.style.backgroundColor = "#2c3e50"; 
         document.getElementById("score").style.color = "#ffffff"; 
+        leaderboardScreen.classList.add("dark-theme");  // 점수판 밤 모드 On
+        nameInputScreen.classList.add("dark-theme");     // 이름 입력창 밤 모드 On
     } else {
         canvas.style.backgroundColor = "#ffffff"; 
         document.getElementById("score").style.color = "#535353"; 
+        leaderboardScreen.classList.remove("dark-theme"); // 점수판 낮 모드 Off
+        nameInputScreen.classList.remove("dark-theme");    // 이름 입력창 낮 모드 Off
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -256,9 +265,7 @@ function createCactus(xPosition, speed) {
     obstacles.push({ x: xPosition, y: 310, width: 20, height: 40, speed: speed, type: "cactus" });
 }
 
-// --- 📱 [모바일 전용 핵심 추가] 화면 터치 및 버튼 누르기 제어 ---
-
-// 1. 게임 실행 중일 때 도화지(Canvas) 터치하면 무조건 점프!
+// --- 📱 화면 터치 및 버튼 누르기 제어 ---
 function handleJumpAction() {
     if (gameState === "PLAYING" && !dino.isJumping) {
         dino.dy = -dino.jumpForce;
@@ -266,14 +273,13 @@ function handleJumpAction() {
     }
 }
 canvas.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // 스마트폰 더블터치 확대 같은 기본 오작동 방지
+    e.preventDefault(); 
     handleJumpAction();
 });
 canvas.addEventListener("mousedown", () => {
-    handleJumpAction(); // PC에서 마우스로 도화지 클릭해도 점프되도록 지원
+    handleJumpAction(); 
 });
 
-// 2. 점수판 팝업 떠있을 때 화면 터치하면 꺼지도록 지원
 leaderboardScreen.addEventListener("touchstart", (e) => {
     e.preventDefault();
     if (gameState === "RANKING" || gameState === "RANKING_FROM_GAMEOVER") hideLeaderboard();
@@ -282,8 +288,6 @@ leaderboardScreen.addEventListener("click", () => {
     if (gameState === "RANKING" || gameState === "RANKING_FROM_GAMEOVER") hideLeaderboard();
 });
 
-// 3. 우측 하단 "블록 버튼" 마우스 클릭 & 손가락 터치 이벤트 연결
-// 게임 시작 / 다시 하기 블록
 function handleStartBlock() {
     if (gameState === "START_MENU" || gameState === "GAME_OVER") {
         startGame();
@@ -292,7 +296,6 @@ function handleStartBlock() {
 btnStart.addEventListener("click", handleStartBlock);
 btnStart.addEventListener("touchstart", (e) => { e.preventDefault(); handleStartBlock(); });
 
-// 역대 점수 확인 블록
 function handleRankBlock() {
     if (gameState === "START_MENU" || gameState === "GAME_OVER") {
         showLeaderboard();
@@ -301,8 +304,7 @@ function handleRankBlock() {
 btnRank.addEventListener("click", handleRankBlock);
 btnRank.addEventListener("touchstart", (e) => { e.preventDefault(); handleRankBlock(); });
 
-
-// --- ⌨️ [기존 PC용 조작] 키보드 제어 유지 ---
+// --- ⌨️ 키보드 제어 ---
 window.addEventListener("keydown", (e) => {
     if (gameState === "PLAYING") {
         if (e.code === "Space") handleJumpAction();

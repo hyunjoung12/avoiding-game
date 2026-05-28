@@ -7,8 +7,8 @@ body {
     background-color: #f7f7f7;
     font-family: Arial, sans-serif;
     user-select: none;
-    -webkit-user-select: none; /* 모바일 길게 터치 시 텍스트 선택 방지 */
-    touch-action: manipulation; /* 모바일 더블탭 줌 방지 (터치 반응 속도 향상) */
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
 .game-container {
@@ -39,7 +39,6 @@ canvas {
     display: block;
 }
 
-/* 모바일 화면 크기에 맞춰 캔버스 비율 자동 조절 */
 @media (max-width: 820px) {
     .canvas-container {
         width: 95vw;
@@ -51,12 +50,14 @@ canvas {
     }
 }
 
+/* 팝업 스크린 기본 (낮 모드: 흰 배경, 검은 글씨) */
 .overlay-screen {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(255, 255, 255, 0.95);
+    color: #333333;
     border: 2px solid #333;
     padding: 25px 40px;
     border-radius: 10px;
@@ -65,9 +66,17 @@ canvas {
     width: 80%;
     max-width: 400px;
     box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s; /* 부드러운 전환 효과 */
 }
 
-.overlay-screen h2 { margin-top: 0; color: #333; font-size: 20px; }
+/* ★ [추가] 밤 모드일 때의 점수판 스타일 (검은 배경, 흰 글씨) */
+.overlay-screen.dark-theme {
+    background-color: rgba(44, 62, 80, 0.95);
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.overlay-screen h2 { margin-top: 0; color: inherit; font-size: 20px; }
 .overlay-screen input {
     font-size: 18px;
     padding: 5px 10px;
@@ -122,7 +131,7 @@ canvas {
     gap: 8px;
     width: 180px;
     transition: opacity 0.2s;
-    z-index: 20; /* 모바일에서 터치가 잘 되도록 맨 앞으로 배치 */
+    z-index: 20;
 }
 
 @media (max-width: 820px) {
