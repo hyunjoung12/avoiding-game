@@ -9,6 +9,7 @@ const leaderboardList = document.getElementById("leaderboardList");
 const btnStart = document.getElementById("btn-start");
 const btnRank = document.getElementById("btn-rank");
 const buttonContainer = document.querySelector(".button-container");
+const scoreBoard = document.getElementById("score"); // 상단 스코어판 엘리먼트
 
 // 1. 공룡 데이터
 const dino = {
@@ -99,7 +100,9 @@ function startGame() {
     dino.y = 300;
     dino.dy = 0;
     dino.isJumping = false;
-    document.getElementById("score").innerText = "Score: 0";
+    
+    scoreBoard.innerText = "Score: 0";
+    scoreBoard.style.color = "#535353"; // 시작할 땐 항상 검은색 계열 글씨
     
     nameInputScreen.classList.add("hidden");
     leaderboardScreen.classList.add("hidden");
@@ -116,7 +119,8 @@ function backToMenu() {
     dino.y = 300;
     dino.dy = 0;
     dino.isJumping = false;
-    document.getElementById("score").innerText = "Score: 0";
+    scoreBoard.innerText = "Score: 0";
+    scoreBoard.style.color = "#535353";
 
     nameInputScreen.classList.add("hidden");
     leaderboardScreen.classList.add("hidden");
@@ -128,12 +132,8 @@ function backToMenu() {
 
 // --- [그리기 함수들] ---
 function drawMenu() {
-    // 시작 메뉴는 항상 기본 밝은 테마로 리셋
     canvas.style.backgroundColor = "#ffffff"; 
-    document.getElementById("score").style.color = "#535353";
-    leaderboardScreen.classList.remove("dark-theme");
-    nameInputScreen.classList.remove("dark-theme");
-
+    scoreBoard.style.color = "#535353";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#333";
     ctx.font = "bold 35px Arial";
@@ -170,17 +170,13 @@ function update(){
     let currentStage = Math.floor(score / 100);
     let isDarkTheme = (currentStage % 2 === 1); 
 
-    // ★ [실시간 테마 감지] 배경 테마에 맞춰 캔버스, 점수판 UI의 색상을 스왑합니다.
+    // ★ [핵심 수정한 곳] 배경이 어두워지면 상단 스코어 글자색을 완벽하게 흰색(#ffffff)으로 바꿉니다.
     if (isDarkTheme) {
-        canvas.style.backgroundColor = "#2c3e50"; 
-        document.getElementById("score").style.color = "#ffffff"; 
-        leaderboardScreen.classList.add("dark-theme");  // 점수판 밤 모드 On
-        nameInputScreen.classList.add("dark-theme");     // 이름 입력창 밤 모드 On
+        canvas.style.backgroundColor = "#2c3e50"; // 어두운 배경
+        scoreBoard.style.color = "#ffffff";       // ★ 스코어판 글자색: 하얀색!
     } else {
-        canvas.style.backgroundColor = "#ffffff"; 
-        document.getElementById("score").style.color = "#535353"; 
-        leaderboardScreen.classList.remove("dark-theme"); // 점수판 낮 모드 Off
-        nameInputScreen.classList.remove("dark-theme");    // 이름 입력창 낮 모드 Off
+        canvas.style.backgroundColor = "#ffffff"; // 밝은 배경
+        scoreBoard.style.color = "#535353";       // ★ 스코어판 글자색: 다시 검은색!
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -255,7 +251,7 @@ function update(){
 
         if (obs.x + obs.width < 0) {
             obstacles.splice(i, 1); i--; score++;
-            document.getElementById("score").innerText = "Score: " + score;
+            scoreBoard.innerText = "Score: " + score;
         }
     }
     requestAnimationFrame(update);
