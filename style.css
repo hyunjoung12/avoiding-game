@@ -1,0 +1,132 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f7f7f7;
+    font-family: Arial, sans-serif;
+    user-select: none;
+}
+
+.game-container {
+    text-align: center;
+    position: relative;
+}
+
+#score {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #535353;
+}
+
+.canvas-container {
+    position: relative;
+    width: 800px;
+    height: 400px;
+}
+
+canvas {
+    background-color: #ffffff;
+    border: 2px solid #333333;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.overlay-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 2px solid #333;
+    padding: 25px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.overlay-screen h2 { margin-top: 0; color: #333; }
+.overlay-screen input {
+    font-size: 18px;
+    padding: 5px 10px;
+    text-align: center;
+    border: 2px solid #2ecc71;
+    outline: none;
+}
+
+/* --- [수정] 역대 점수판 리스트 디자인 깔끔하게 바꾸기 --- */
+#leaderboardList {
+    list-style: none; /* 기본 숫자(1., 2.) 제거 */
+    text-align: left;
+    font-size: 18px;
+    padding-left: 0;
+    margin: 15px 0;
+}
+
+#leaderboardList li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* [추가] 동그라미 메달 공통 디자인 */
+.medal {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%; /* 완벽한 동그라미로 만듦 */
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 12px;
+    color: white;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.3);
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.15);
+}
+
+/* 등수별 메달 색상 설정 */
+.medal-1 { background-color: #f1c40f; border: 1px solid #d4ac0d; } /* 노란색(금메달) */
+.medal-2 { background-color: #b2bec3; border: 1px solid #95a5a6; } /* 은색(은메달) */
+.medal-3 { background-color: #cd7f32; border: 1px solid #b87333; } /* 동색(동메달) */
+.medal-etc { background-color: #7f8c8d; font-size: 12px; }          /* 4, 5등용 회색 */
+
+.hidden { display: none; }
+
+.button-container {
+    position: absolute;
+    right: 10px;
+    bottom: -90px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 180px;
+    transition: opacity 0.2s;
+}
+
+.hidden-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.block-btn {
+    background-color: #34495e;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 2px solid #2c3e50;
+    box-shadow: 0 3px 0 #2c3e50;
+    cursor: pointer;
+}
+
+.block-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+.blink { animation: blinker 1s linear infinite; font-size: 12px; color: #7f8c8d; text-align: center;}
+@keyframes blinker { 50% { opacity: 0; } }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노베이스가 만든 공룡 게임</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="game-container">
+        <div id="score">Score: 0</div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+            <div id="nameInputScreen" class="overlay-screen hidden">
+                <h2>기록 달성! 이름을 입력하세요</h2>
+                <input type="text" id="playerName" placeholder="이름 입력 (3글자 내외)" maxlength="10">
+                <p>Enter를 누르면 저장됩니다</p>
+            </div>
+
+            <div id="leaderboardScreen" class="overlay-screen hidden">
+                <h2>🏆 역대 기록 TOP 5 🏆</h2>
+                <ol id="leaderboardList">
+                    </ol>
+                <p class="blink">닫으려면 아무 키나 누르세요</p>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <div id="btn-start" class="block-btn">게임시작 (S)</div>
+            <div id="btn-rank" class="block-btn">역대 점수 확인 (A)</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script> 
+</body>
+</html>
